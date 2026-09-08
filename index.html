@@ -1,1 +1,1313 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VBA Avançado para Excel — Curso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2420;
+    --paper:#f6f4ec;
+    --paper-2:#efece1;
+    --line:#d9d4c4;
+    --green-dk:#123f28;
+    --green:#1a6b41;
+    --green-lt:#3e9a6c;
+    --amber:#b4762c;
+    --code-bg:#12181f;
+    --code-text:#d7dce3;
+    --code-key:#7fb7e8;
+    --code-str:#d0a35c;
+    --code-com:#5f7167;
+    --sidebar-bg:#0d1310;
+    --sidebar-text:#c9d2c9;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+  }
+  .app{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    min-height:100vh;
+  }
+  /* SIDEBAR — estilo "Explorador de Projetos" do VBA */
+  .sidebar{
+    background:var(--sidebar-bg);
+    color:var(--sidebar-text);
+    padding:28px 0 40px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .brand{
+    padding:0 24px 20px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    margin-bottom:14px;
+  }
+  .brand .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--green-lt);
+    letter-spacing:.04em;
+  }
+  .brand h1{
+    font-family:'Spectral',serif;
+    font-size:20px;
+    font-weight:600;
+    margin:6px 0 0;
+    color:#fff;
+    line-height:1.25;
+  }
+  .nav-group-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:#6b776d;
+    padding:14px 24px 6px;
+  }
+  .navlist{list-style:none;margin:0;padding:0;}
+  .navlist li{margin:0;}
+  .navlist button{
+    all:unset;
+    display:flex;
+    gap:10px;
+    align-items:baseline;
+    width:100%;
+    padding:9px 24px;
+    cursor:pointer;
+    font-size:13.5px;
+    color:var(--sidebar-text);
+    border-left:3px solid transparent;
+  }
+  .navlist button .num{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:#5c6b5e;
+    min-width:20px;
+  }
+  .navlist button:hover{background:rgba(255,255,255,.05); color:#fff;}
+  .navlist button.active{
+    background:rgba(62,154,108,.14);
+    border-left-color:var(--green-lt);
+    color:#fff;
+  }
+  .navlist button.active .num{color:var(--green-lt);}
+
+  /* MAIN CONTENT */
+  main{
+    padding:56px 64px 120px;
+    max-width:860px;
+  }
+  .module{display:none;}
+  .module.active{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--green);
+    margin-bottom:10px;
+  }
+  h2.mtitle{
+    font-family:'Spectral',serif;
+    font-size:34px;
+    font-weight:700;
+    margin:0 0 22px;
+    color:var(--green-dk);
+    max-width:22ch;
+  }
+  .lede{
+    font-size:17px;
+    color:#3a453e;
+    max-width:68ch;
+    margin-bottom:8px;
+  }
+  h3{
+    font-family:'Spectral',serif;
+    font-size:20px;
+    font-weight:600;
+    margin:34px 0 10px;
+    color:var(--green-dk);
+  }
+  p{max-width:70ch; margin:0 0 14px;}
+  ul,ol{max-width:66ch; padding-left:22px;}
+  li{margin-bottom:6px;}
+  code.inline{
+    font-family:'JetBrains Mono',monospace;
+    background:var(--paper-2);
+    border:1px solid var(--line);
+    padding:1px 6px;
+    border-radius:3px;
+    font-size:.9em;
+  }
+  pre{
+    background:var(--code-bg);
+    color:var(--code-text);
+    padding:20px 22px;
+    border-radius:6px;
+    overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    line-height:1.65;
+    margin:14px 0 24px;
+    border:1px solid #232c25;
+  }
+  pre .kw{color:var(--code-key);}
+  pre .str{color:var(--code-str);}
+  pre .com{color:var(--code-com); font-style:italic;}
+
+  .callout{
+    border-left:3px solid var(--amber);
+    background:#f3ead9;
+    padding:14px 18px;
+    margin:20px 0;
+    font-size:14.5px;
+    max-width:66ch;
+  }
+  .callout strong{color:#7a4d16;}
+
+  .exercises{
+    margin-top:40px;
+    padding-top:26px;
+    border-top:1px solid var(--line);
+  }
+  .exercises h3{margin-top:0;}
+  .ex{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:18px 20px;
+    margin-bottom:14px;
+  }
+  .ex .exq{font-weight:600; margin-bottom:8px; font-size:14.5px;}
+  .ex details{margin-top:6px;}
+  .ex summary{
+    cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--green);
+    outline:none;
+    user-select:none;
+  }
+  .ex details[open] summary{margin-bottom:10px;}
+  .ex pre{margin:8px 0 0; font-size:12.5px;}
+
+  .modnav{
+    display:flex;
+    justify-content:space-between;
+    margin-top:52px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+  }
+  .modnav button{
+    all:unset;
+    cursor:pointer;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--green-dk);
+    padding:8px 0;
+  }
+  .modnav button:hover{color:var(--green-lt);}
+  .modnav button:disabled{color:#b9b2a0; cursor:default;}
+
+  @media (max-width:820px){
+    .app{grid-template-columns:1fr;}
+    .sidebar{position:relative; height:auto;}
+    main{padding:36px 22px 100px;}
+    h2.mtitle{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar">
+    <div class="brand">
+      <div class="tag">Projeto1 (VBAProject)</div>
+      <h1>VBA Avançado<br>para Excel</h1>
+    </div>
+    <div class="nav-group-label">Módulos do curso</div>
+    <ul class="navlist" id="navlist"></ul>
+  </nav>
+  <main id="main"></main>
+</div>
+
+<script>
+const modules = [
+{
+  id:"ambiente",
+  title:"Ambiente Visual Basic for Applications (VBA)",
+  lede:"Antes de escrever qualquer linha de código, é preciso conhecer o terreno: o Editor VBA (VBE) é onde toda a automação do Excel acontece.",
+  body:`
+    <h3>Abrindo o Editor VBA</h3>
+    <p>Pressione <code class="inline">Alt + F11</code> em qualquer planilha do Excel para abrir o VBE (Visual Basic Editor). Se a guia Desenvolvedor não estiver visível, ative-a em
+    Arquivo → Opções → Personalizar Faixa de Opções → marque "Desenvolvedor".</p>
+
+    <h3>As três janelas essenciais</h3>
+    <ul>
+      <li><strong>Explorador de Projetos</strong> — árvore com todas as planilhas, pastas de trabalho, módulos, módulos de classe e formulários do projeto.</li>
+      <li><strong>Janela de Propriedades</strong> — mostra e permite editar as propriedades do objeto selecionado (nome, visibilidade, cor de fundo etc).</li>
+      <li><strong>Janela Imediata</strong> (<code class="inline">Ctrl+G</code>) — console para testar comandos e imprimir valores com <code class="inline">Debug.Print</code> sem rodar a macro inteira.</li>
+    </ul>
+
+    <h3>Tipos de módulo</h3>
+    <ul>
+      <li><strong>Módulo padrão</strong> — onde ficam Sub e Function de uso geral.</li>
+      <li><strong>Módulo de classe</strong> — define objetos personalizados (módulo 6).</li>
+      <li><strong>Módulo de UserForm</strong> — código por trás de formulários (módulo 10).</li>
+      <li><strong>Módulo de planilha/pasta de trabalho</strong> — recebe eventos (módulo 5).</li>
+    </ul>
+
+    <h3>Primeira macro</h3>
+    <pre><span class="kw">Sub</span> MinhaPrimeiraMacro()
+    MsgBox <span class="str">"Olá, este é o VBA!"</span>
+    Debug.Print <span class="str">"Impresso na Janela Imediata"</span>
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Dica prática:</strong> salve a pasta de trabalho como <code class="inline">.xlsm</code> (habilitada para macro). Um arquivo <code class="inline">.xlsx</code> comum descarta todo o código VBA ao salvar.</div>
+  `,
+  exercises:[
+    {q:"Abra o VBE, insira um novo módulo padrão (Inserir → Módulo) e crie uma Sub chamada SaudacaoInicial que exiba uma MsgBox com seu nome.",
+     a:`<span class="kw">Sub</span> SaudacaoInicial()
+    MsgBox <span class="str">"Olá, meu nome é Luiz!"</span>
+<span class="kw">End Sub</span>`},
+    {q:"Na Janela Imediata, sem criar uma macro, escreva um comando que imprima o resultado de 15 * 4.",
+     a:`? 15 * 4
+<span class="com">' Ou, de forma equivalente:</span>
+Debug.Print 15 * 4`}
+  ]
+},
+{
+  id:"objetos",
+  title:"Objetos, Métodos e Propriedades",
+  lede:"O VBA é orientado a objetos: tudo no Excel — a pasta de trabalho, uma planilha, uma célula, um gráfico — é um objeto com propriedades (características) e métodos (ações).",
+  body:`
+    <h3>A hierarquia de objetos do Excel</h3>
+    <p><code class="inline">Application</code> → <code class="inline">Workbook</code> → <code class="inline">Worksheet</code> → <code class="inline">Range</code>. Você acessa um objeto filho a partir do pai, usando ponto:</p>
+    <pre>Application.Workbooks(<span class="str">"Vendas.xlsx"</span>).Worksheets(<span class="str">"Plan1"</span>).Range(<span class="str">"A1"</span>)</pre>
+
+    <h3>Propriedade x Método</h3>
+    <p>Uma <strong>propriedade</strong> é um atributo (substantivo): <code class="inline">Range("A1").Value</code>, <code class="inline">Range("A1").Font.Bold</code>.
+    Um <strong>método</strong> é uma ação (verbo): <code class="inline">Range("A1").Copy</code>, <code class="inline">Worksheets("Plan1").Delete</code>.</p>
+
+    <pre><span class="kw">Sub</span> ExemploObjetos()
+    <span class="com">' Propriedade: lendo e escrevendo valor</span>
+    Range(<span class="str">"A1"</span>).Value = <span class="str">"Faturamento"</span>
+
+    <span class="com">' Propriedade aninhada: formatação de fonte</span>
+    Range(<span class="str">"A1"</span>).Font.Bold = <span class="kw">True</span>
+    Range(<span class="str">"A1"</span>).Font.Color = RGB(255, 0, 0)
+
+    <span class="com">' Método: copiar e colar</span>
+    Range(<span class="str">"A1"</span>).Copy Destination:=Range(<span class="str">"B1"</span>)
+
+    <span class="com">' Método com argumentos nomeados</span>
+    Worksheets.Add After:=Worksheets(Worksheets.Count)
+<span class="kw">End Sub</span></pre>
+
+    <h3>Objetos coleção</h3>
+    <p><code class="inline">Worksheets</code>, <code class="inline">Workbooks</code> e <code class="inline">Range</code> (quando aponta para várias células) são coleções — você pode percorrê-las com <code class="inline">For Each</code>, tema do próximo módulo.</p>
+
+    <div class="callout"><strong>Atalho essencial:</strong> use <code class="inline">Object Browser</code> (<code class="inline">F2</code> dentro do VBE) para explorar todas as propriedades e métodos disponíveis de qualquer objeto.</div>
+  `,
+  exercises:[
+    {q:"Escreva um código que insira o valor 100 na célula B2, deixe-a em negrito e com preenchimento amarelo.",
+     a:`<span class="kw">Sub</span> FormatarCelula()
+    Range(<span class="str">"B2"</span>).Value = 100
+    Range(<span class="str">"B2"</span>).Font.Bold = <span class="kw">True</span>
+    Range(<span class="str">"B2"</span>).Interior.Color = RGB(255, 255, 0)
+<span class="kw">End Sub</span>`},
+    {q:"Qual a diferença entre Range(\"A1\").Value = 10 e Range(\"A1\").Clear ? Classifique cada instrução como uso de propriedade ou de método.",
+     a:`<span class="com">' Value = 10  → propriedade (define um atributo do objeto Range)</span>
+<span class="com">' Clear       → método (executa uma ação: apaga conteúdo e formatação)</span>`}
+  ]
+},
+{
+  id:"estruturas",
+  title:"Estruturas, Operadores Lógicos e Instruções",
+  lede:"Condicionais, laços de repetição e operadores lógicos são o esqueleto de qualquer macro que precisa tomar decisões ou repetir tarefas.",
+  body:`
+    <h3>If / ElseIf / Else</h3>
+    <pre><span class="kw">Sub</span> ClassificarNota()
+    <span class="kw">Dim</span> nota <span class="kw">As</span> Double
+    nota = Range(<span class="str">"A1"</span>).Value
+
+    <span class="kw">If</span> nota >= 7 <span class="kw">Then</span>
+        Range(<span class="str">"B1"</span>).Value = <span class="str">"Aprovado"</span>
+    <span class="kw">ElseIf</span> nota >= 5 <span class="kw">Then</span>
+        Range(<span class="str">"B1"</span>).Value = <span class="str">"Recuperação"</span>
+    <span class="kw">Else</span>
+        Range(<span class="str">"B1"</span>).Value = <span class="str">"Reprovado"</span>
+    <span class="kw">End If</span>
+<span class="kw">End Sub</span></pre>
+
+    <h3>Select Case</h3>
+    <pre><span class="kw">Select Case</span> Weekday(Date)
+    <span class="kw">Case</span> 1, 7
+        MsgBox <span class="str">"Fim de semana"</span>
+    <span class="kw">Case</span> 2 <span class="kw">To</span> 6
+        MsgBox <span class="str">"Dia útil"</span>
+<span class="kw">End Select</span></pre>
+
+    <h3>Operadores lógicos</h3>
+    <p><code class="inline">And</code>, <code class="inline">Or</code>, <code class="inline">Not</code>, <code class="inline">Xor</code> combinam condições:</p>
+    <pre><span class="kw">If</span> idade >= 18 <span class="kw">And</span> possuiCNH = <span class="kw">True</span> <span class="kw">Then</span>
+    MsgBox <span class="str">"Pode dirigir"</span>
+<span class="kw">End If</span></pre>
+
+    <h3>Laços de repetição</h3>
+    <pre><span class="com">' For...Next — quando se sabe o número de repetições</span>
+<span class="kw">For</span> i = 1 <span class="kw">To</span> 10
+    Cells(i, 1).Value = i * 2
+<span class="kw">Next</span> i
+
+<span class="com">' For Each — percorrer uma coleção</span>
+<span class="kw">For Each</span> cel <span class="kw">In</span> Range(<span class="str">"A1:A10"</span>)
+    <span class="kw">If</span> cel.Value < 0 <span class="kw">Then</span> cel.Font.Color = RGB(255,0,0)
+<span class="kw">Next</span> cel
+
+<span class="com">' Do While / Do Until — quando o número de repetições é incerto</span>
+<span class="kw">Dim</span> lin <span class="kw">As</span> Integer: lin = 1
+<span class="kw">Do While</span> Cells(lin, 1).Value <> <span class="str">""</span>
+    lin = lin + 1
+<span class="kw">Loop</span></pre>
+
+    <div class="callout"><strong>Boa prática:</strong> prefira <code class="inline">For Each</code> a <code class="inline">For...Next</code> com índices quando não precisar do número da posição — o código fica mais legível.</div>
+  `,
+  exercises:[
+    {q:"Escreva uma macro que percorra as células A1:A20 e pinte de verde os valores pares e de vermelho os ímpares.",
+     a:`<span class="kw">Sub</span> ColorirParesImpares()
+    <span class="kw">Dim</span> cel <span class="kw">As</span> Range
+    <span class="kw">For Each</span> cel <span class="kw">In</span> Range(<span class="str">"A1:A20"</span>)
+        <span class="kw">If</span> cel.Value <span class="kw">Mod</span> 2 = 0 <span class="kw">Then</span>
+            cel.Interior.Color = RGB(0,176,80)
+        <span class="kw">Else</span>
+            cel.Interior.Color = RGB(255,0,0)
+        <span class="kw">End If</span>
+    <span class="kw">Next</span> cel
+<span class="kw">End Sub</span>`},
+    {q:"Use Do While para encontrar automaticamente a última linha preenchida na coluna A e escrever esse número na célula C1.",
+     a:`<span class="kw">Sub</span> UltimaLinha()
+    <span class="kw">Dim</span> lin <span class="kw">As</span> Long
+    lin = 1
+    <span class="kw">Do While</span> Cells(lin, 1).Value <> <span class="str">""</span>
+        lin = lin + 1
+    <span class="kw">Loop</span>
+    Range(<span class="str">"C1"</span>).Value = lin - 1
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"erros",
+  title:"Estruturas de Tratamento de Erros",
+  lede:"Macros que interagem com dados reais falham — arquivo fechado, célula vazia, divisão por zero. O tratamento de erros evita que a macro trave ou corrompa dados.",
+  body:`
+    <h3>On Error GoTo</h3>
+    <pre><span class="kw">Sub</span> DividirValores()
+    <span class="kw">On Error GoTo</span> TratarErro
+
+    <span class="kw">Dim</span> resultado <span class="kw">As</span> Double
+    resultado = Range(<span class="str">"A1"</span>).Value / Range(<span class="str">"A2"</span>).Value
+    Range(<span class="str">"A3"</span>).Value = resultado
+    <span class="kw">Exit Sub</span>
+
+TratarErro:
+    MsgBox <span class="str">"Erro "</span> & Err.Number & <span class="str">": "</span> & Err.Description
+<span class="kw">End Sub</span></pre>
+
+    <h3>On Error Resume Next</h3>
+    <p>Ignora o erro e segue a execução — use com cautela, sempre seguido de uma checagem manual do erro:</p>
+    <pre><span class="kw">On Error Resume Next</span>
+Worksheets(<span class="str">"Planilha_Inexistente"</span>).Activate
+<span class="kw">If</span> Err.Number <> 0 <span class="kw">Then</span>
+    MsgBox <span class="str">"A planilha não existe."</span>
+    Err.Clear
+<span class="kw">End If</span>
+<span class="kw">On Error GoTo</span> 0 <span class="com">' restaura o tratamento padrão</span></pre>
+
+    <h3>Objeto Err</h3>
+    <ul>
+      <li><code class="inline">Err.Number</code> — código do erro</li>
+      <li><code class="inline">Err.Description</code> — descrição textual</li>
+      <li><code class="inline">Err.Clear</code> — limpa o erro atual</li>
+      <li><code class="inline">Err.Raise</code> — dispara um erro personalizado</li>
+    </ul>
+
+    <h3>Padrão profissional: bloco estruturado</h3>
+    <pre><span class="kw">Sub</span> ProcessarDados()
+    <span class="kw">On Error GoTo</span> TratarErro
+    Application.ScreenUpdating = <span class="kw">False</span>
+
+    <span class="com">' ... código principal ...</span>
+
+Saida:
+    Application.ScreenUpdating = <span class="kw">True</span>
+    <span class="kw">Exit Sub</span>
+TratarErro:
+    MsgBox <span class="str">"Falha: "</span> & Err.Description, vbCritical
+    <span class="kw">Resume</span> Saida
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Atenção:</strong> sempre restaure <code class="inline">Application.ScreenUpdating</code> e outras configurações no bloco de tratamento de erro — senão, um erro no meio da macro deixa o Excel "travado" em modo silencioso.</div>
+  `,
+  exercises:[
+    {q:"Crie uma macro que tente abrir um arquivo chamado 'Relatorio.xlsx' e, se ele não existir, exiba uma mensagem amigável em vez do erro padrão do VBA.",
+     a:`<span class="kw">Sub</span> AbrirRelatorio()
+    <span class="kw">On Error GoTo</span> TratarErro
+    Workbooks.Open <span class="str">"C:\\Dados\\Relatorio.xlsx"</span>
+    <span class="kw">Exit Sub</span>
+TratarErro:
+    MsgBox <span class="str">"Não foi possível localizar o arquivo Relatorio.xlsx."</span>, vbExclamation
+<span class="kw">End Sub</span>`},
+    {q:"Use Err.Raise para criar um erro personalizado quando o usuário tentar dividir por zero em uma função, com uma mensagem própria.",
+     a:`<span class="kw">Function</span> DividirSeguro(a <span class="kw">As</span> Double, b <span class="kw">As</span> Double) <span class="kw">As</span> Double
+    <span class="kw">If</span> b = 0 <span class="kw">Then</span>
+        Err.Raise vbObjectError + 513, , <span class="str">"Divisão por zero não permitida."</span>
+    <span class="kw">End If</span>
+    DividirSeguro = a / b
+<span class="kw">End Function</span>`}
+  ]
+},
+{
+  id:"eventos",
+  title:"Eventos e Instruções",
+  lede:"Eventos disparam código automaticamente quando algo acontece na pasta de trabalho — sem precisar clicar em um botão de macro.",
+  body:`
+    <h3>Onde ficam os eventos</h3>
+    <p>Eventos de planilha ficam no módulo da própria <code class="inline">Worksheet</code> (clique duplo em seu nome, no Explorador de Projetos); eventos de pasta de trabalho, no módulo <code class="inline">ThisWorkbook</code>.</p>
+
+    <h3>Evento Worksheet_Change</h3>
+    <pre><span class="com">' Código dentro do módulo da planilha (ex.: Plan1)</span>
+<span class="kw">Private Sub</span> Worksheet_Change(<span class="kw">ByVal</span> Target <span class="kw">As</span> Range)
+    <span class="kw">If Not</span> Intersect(Target, Range(<span class="str">"A1:A10"</span>)) <span class="kw">Is Nothing Then</span>
+        MsgBox <span class="str">"Você alterou a célula "</span> & Target.Address
+    <span class="kw">End If</span>
+<span class="kw">End Sub</span></pre>
+
+    <h3>Evento Workbook_Open</h3>
+    <pre><span class="com">' Código dentro de ThisWorkbook</span>
+<span class="kw">Private Sub</span> Workbook_Open()
+    MsgBox <span class="str">"Bem-vindo, "</span> & Application.UserName & <span class="str">"!"</span>
+    Worksheets(<span class="str">"Dashboard"</span>).Activate
+<span class="kw">End Sub</span></pre>
+
+    <h3>Outros eventos úteis</h3>
+    <ul>
+      <li><code class="inline">Worksheet_SelectionChange</code> — ao mudar a seleção de célula.</li>
+      <li><code class="inline">Workbook_BeforeSave</code> — antes de salvar (bom para validações).</li>
+      <li><code class="inline">Workbook_BeforeClose</code> — antes de fechar (bom para confirmar dados salvos).</li>
+      <li><code class="inline">Worksheet_Activate</code> — ao ativar a aba.</li>
+    </ul>
+
+    <div class="callout"><strong>Cuidado com loops de evento:</strong> alterar uma célula dentro de <code class="inline">Worksheet_Change</code> dispara o próprio evento de novo. Use <code class="inline">Application.EnableEvents = False</code> antes da alteração e <code class="inline">= True</code> depois.</div>
+  `,
+  exercises:[
+    {q:"Crie um evento Worksheet_Change que, sempre que a célula B2 for alterada, registre a data e hora da alteração na célula C2.",
+     a:`<span class="kw">Private Sub</span> Worksheet_Change(<span class="kw">ByVal</span> Target <span class="kw">As</span> Range)
+    <span class="kw">If Not</span> Intersect(Target, Range(<span class="str">"B2"</span>)) <span class="kw">Is Nothing Then</span>
+        Application.EnableEvents = <span class="kw">False</span>
+        Range(<span class="str">"C2"</span>).Value = Now
+        Application.EnableEvents = <span class="kw">True</span>
+    <span class="kw">End If</span>
+<span class="kw">End Sub</span>`},
+    {q:"No módulo ThisWorkbook, crie um evento que impeça o fechamento do arquivo sem salvar, perguntando ao usuário se deseja salvar antes.",
+     a:`<span class="kw">Private Sub</span> Workbook_BeforeClose(Cancel <span class="kw">As</span> Boolean)
+    <span class="kw">If Not</span> Me.Saved <span class="kw">Then</span>
+        <span class="kw">If</span> MsgBox(<span class="str">"Salvar antes de fechar?"</span>, vbYesNo) = vbYes <span class="kw">Then</span>
+            Me.Save
+        <span class="kw">End If</span>
+    <span class="kw">End If</span>
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"classes",
+  title:"Módulos de Classe",
+  lede:"Módulos de classe permitem criar seus próprios tipos de objeto — com propriedades, métodos e até eventos próprios — trazendo a Programação Orientada a Objetos para o VBA.",
+  body:`
+    <h3>Criando uma classe</h3>
+    <p>Insira um "Módulo de Classe" (Inserir → Módulo de Classe) e renomeie-o, por exemplo, para <code class="inline">clsFuncionario</code>.</p>
+    <pre><span class="com">' --- Dentro do módulo de classe clsFuncionario ---</span>
+<span class="kw">Private</span> mNome <span class="kw">As</span> String
+<span class="kw">Private</span> mSalario <span class="kw">As</span> Double
+
+<span class="kw">Public Property Get</span> Nome() <span class="kw">As</span> String
+    Nome = mNome
+<span class="kw">End Property</span>
+
+<span class="kw">Public Property Let</span> Nome(valor <span class="kw">As</span> String)
+    mNome = valor
+<span class="kw">End Property</span>
+
+<span class="kw">Public Property Get</span> Salario() <span class="kw">As</span> Double
+    Salario = mSalario
+<span class="kw">End Property</span>
+
+<span class="kw">Public Property Let</span> Salario(valor <span class="kw">As</span> Double)
+    <span class="kw">If</span> valor < 0 <span class="kw">Then</span> Err.Raise 5, , <span class="str">"Salário não pode ser negativo"</span>
+    mSalario = valor
+<span class="kw">End Property</span>
+
+<span class="kw">Public Function</span> CalcularBonus() <span class="kw">As</span> Double
+    CalcularBonus = mSalario * 0.1
+<span class="kw">End Function</span></pre>
+
+    <h3>Usando a classe em um módulo padrão</h3>
+    <pre><span class="kw">Sub</span> TestarClasse()
+    <span class="kw">Dim</span> func <span class="kw">As</span> clsFuncionario
+    <span class="kw">Set</span> func = <span class="kw">New</span> clsFuncionario
+
+    func.Nome = <span class="str">"Ana Silva"</span>
+    func.Salario = 5000
+
+    MsgBox func.Nome & <span class="str">" — Bônus: R$ "</span> & func.CalcularBonus()
+<span class="kw">End Sub</span></pre>
+
+    <h3>Por que usar classes?</h3>
+    <ul>
+      <li>Encapsulamento — a propriedade <code class="inline">Salario</code> valida o valor antes de aceitar.</li>
+      <li>Reuso — a mesma classe serve para vários projetos.</li>
+      <li>Coleções de objetos personalizados (uma coleção de <code class="inline">clsFuncionario</code>, por exemplo).</li>
+    </ul>
+
+    <div class="callout"><strong>Property Get / Let / Set:</strong> use <code class="inline">Let</code> para atribuir valores simples e <code class="inline">Set</code> quando a propriedade guarda uma referência a outro objeto.</div>
+  `,
+  exercises:[
+    {q:"Crie uma classe clsProduto com propriedades Nome, PrecoUnitario e Quantidade, e um método CalcularTotal que retorne Preço × Quantidade.",
+     a:`<span class="com">' --- clsProduto ---</span>
+<span class="kw">Public</span> Nome <span class="kw">As</span> String
+<span class="kw">Public</span> PrecoUnitario <span class="kw">As</span> Double
+<span class="kw">Public</span> Quantidade <span class="kw">As</span> Integer
+
+<span class="kw">Public Function</span> CalcularTotal() <span class="kw">As</span> Double
+    CalcularTotal = PrecoUnitario * Quantidade
+<span class="kw">End Function</span>
+
+<span class="com">' --- Módulo padrão ---</span>
+<span class="kw">Sub</span> TestarProduto()
+    <span class="kw">Dim</span> p <span class="kw">As</span> clsProduto
+    <span class="kw">Set</span> p = <span class="kw">New</span> clsProduto
+    p.Nome = <span class="str">"Teclado"</span>: p.PrecoUnitario = 120: p.Quantidade = 3
+    MsgBox p.Nome & <span class="str">": R$ "</span> & p.CalcularTotal()
+<span class="kw">End Sub</span>`},
+    {q:"Adicione validação: a propriedade Quantidade não deve aceitar valores negativos. Use Property Let para isso.",
+     a:`<span class="kw">Private</span> mQuantidade <span class="kw">As</span> Integer
+
+<span class="kw">Public Property Get</span> Quantidade() <span class="kw">As</span> Integer
+    Quantidade = mQuantidade
+<span class="kw">End Property</span>
+
+<span class="kw">Public Property Let</span> Quantidade(valor <span class="kw">As</span> Integer)
+    <span class="kw">If</span> valor < 0 <span class="kw">Then</span>
+        Err.Raise 5, , <span class="str">"Quantidade não pode ser negativa"</span>
+    <span class="kw">Else</span>
+        mQuantidade = valor
+    <span class="kw">End If</span>
+<span class="kw">End Property</span>`}
+  ]
+},
+{
+  id:"funcoes",
+  title:"Funções Definidas pelo Usuário (UDF)",
+  lede:"Além de gravar macros (Sub), o VBA permite criar suas próprias funções de planilha — que aparecem na barra de fórmulas junto com SOMA e PROCV.",
+  body:`
+    <h3>Function x Sub</h3>
+    <p>Uma <code class="inline">Sub</code> executa ações; uma <code class="inline">Function</code> retorna um valor e pode ser usada diretamente numa célula, como <code class="inline">=MinhaFuncao(A1)</code>.</p>
+
+    <h3>Exemplo simples</h3>
+    <pre><span class="kw">Function</span> PrecoComDesconto(preco <span class="kw">As</span> Double, percentual <span class="kw">As</span> Double) <span class="kw">As</span> Double
+    PrecoComDesconto = preco * (1 - percentual / 100)
+<span class="kw">End Function</span></pre>
+    <p>Na planilha: <code class="inline">=PrecoComDesconto(A1;10)</code> aplica 10% de desconto ao valor de A1.</p>
+
+    <h3>Argumentos opcionais e valores padrão</h3>
+    <pre><span class="kw">Function</span> Saudacao(nome <span class="kw">As</span> String, <span class="kw">Optional</span> periodo <span class="kw">As</span> String = <span class="str">"dia"</span>) <span class="kw">As</span> String
+    Saudacao = <span class="str">"Bom "</span> & periodo & <span class="str">", "</span> & nome & <span class="str">"!"</span>
+<span class="kw">End Function</span></pre>
+
+    <h3>UDF que trabalha com intervalos</h3>
+    <pre><span class="kw">Function</span> MediaSemZeros(intervalo <span class="kw">As</span> Range) <span class="kw">As</span> Double
+    <span class="kw">Dim</span> soma <span class="kw">As</span> Double, cont <span class="kw">As</span> Long, cel <span class="kw">As</span> Range
+    <span class="kw">For Each</span> cel <span class="kw">In</span> intervalo
+        <span class="kw">If</span> cel.Value <> 0 <span class="kw">Then</span>
+            soma = soma + cel.Value
+            cont = cont + 1
+        <span class="kw">End If</span>
+    <span class="kw">Next</span> cel
+    <span class="kw">If</span> cont > 0 <span class="kw">Then</span> MediaSemZeros = soma / cont
+<span class="kw">End Function</span></pre>
+
+    <div class="callout"><strong>Limitação importante:</strong> uma UDF chamada de dentro de uma célula não pode alterar outras células, formatar, ou exibir MsgBox — ela só pode calcular e retornar um valor.</div>
+  `,
+  exercises:[
+    {q:"Crie uma UDF chamada ClassificarIMC(peso, altura) que retorne 'Abaixo', 'Normal', 'Sobrepeso' ou 'Obesidade' com base no IMC (peso / altura²).",
+     a:`<span class="kw">Function</span> ClassificarIMC(peso <span class="kw">As</span> Double, altura <span class="kw">As</span> Double) <span class="kw">As</span> String
+    <span class="kw">Dim</span> imc <span class="kw">As</span> Double
+    imc = peso / (altura ^ 2)
+
+    <span class="kw">Select Case</span> imc
+        <span class="kw">Case Is</span> < 18.5: ClassificarIMC = <span class="str">"Abaixo"</span>
+        <span class="kw">Case</span> 18.5 <span class="kw">To</span> 24.9: ClassificarIMC = <span class="str">"Normal"</span>
+        <span class="kw">Case</span> 25 <span class="kw">To</span> 29.9: ClassificarIMC = <span class="str">"Sobrepeso"</span>
+        <span class="kw">Case Else</span>: ClassificarIMC = <span class="str">"Obesidade"</span>
+    <span class="kw">End Select</span>
+<span class="kw">End Function</span>`},
+    {q:"Crie uma UDF ContarMaiores(intervalo, limite) que conte quantas células de um intervalo têm valor maior que um limite dado.",
+     a:`<span class="kw">Function</span> ContarMaiores(intervalo <span class="kw">As</span> Range, limite <span class="kw">As</span> Double) <span class="kw">As</span> Long
+    <span class="kw">Dim</span> cel <span class="kw">As</span> Range, cont <span class="kw">As</span> Long
+    <span class="kw">For Each</span> cel <span class="kw">In</span> intervalo
+        <span class="kw">If</span> cel.Value > limite <span class="kw">Then</span> cont = cont + 1
+    <span class="kw">Next</span> cel
+    ContarMaiores = cont
+<span class="kw">End Function</span>`}
+  ]
+},
+{
+  id:"array",
+  title:"Instrução Array",
+  lede:"Arrays guardam vários valores em uma única variável — essenciais para ler ou escrever grandes blocos de dados de uma só vez, muito mais rápido do que célula por célula.",
+  body:`
+    <h3>Declarando arrays</h3>
+    <pre><span class="com">' Array de tamanho fixo</span>
+<span class="kw">Dim</span> meses(1 <span class="kw">To</span> 12) <span class="kw">As</span> String
+
+<span class="com">' Array de duas dimensões (linha, coluna)</span>
+<span class="kw">Dim</span> matriz(1 <span class="kw">To</span> 5, 1 <span class="kw">To</span> 3) <span class="kw">As</span> Double
+
+<span class="com">' Array dinâmico (tamanho definido em tempo de execução)</span>
+<span class="kw">Dim</span> vendas() <span class="kw">As</span> Double
+ReDim vendas(1 <span class="kw">To</span> 10)</pre>
+
+    <h3>A função Array e literais</h3>
+    <pre><span class="kw">Dim</span> dias <span class="kw">As</span> Variant
+dias = Array(<span class="str">"Seg"</span>, <span class="str">"Ter"</span>, <span class="str">"Qua"</span>, <span class="str">"Qui"</span>, <span class="str">"Sex"</span>)
+
+MsgBox dias(0) <span class="com">' → "Seg" (índice começa em 0 aqui)</span></pre>
+
+    <h3>Transferindo Range ↔ Array (alta performance)</h3>
+    <pre><span class="kw">Sub</span> LerEEscreverRapido()
+    <span class="kw">Dim</span> dados <span class="kw">As</span> Variant
+    <span class="kw">Dim</span> i <span class="kw">As</span> Long
+
+    <span class="com">' Lê o intervalo inteiro de uma vez para um array</span>
+    dados = Range(<span class="str">"A1:A1000"</span>).Value
+
+    <span class="com">' Processa em memória (muito mais rápido que célula a célula)</span>
+    <span class="kw">For</span> i = 1 <span class="kw">To</span> UBound(dados, 1)
+        dados(i, 1) = dados(i, 1) * 1.1
+    <span class="kw">Next</span> i
+
+    <span class="com">' Escreve tudo de volta de uma vez</span>
+    Range(<span class="str">"B1:B1000"</span>).Value = dados
+<span class="kw">End Sub</span></pre>
+
+    <h3>ReDim Preserve</h3>
+    <p>Redimensiona um array dinâmico sem perder os dados já armazenados (só é possível alterar a última dimensão):</p>
+    <pre>ReDim vendas(1 <span class="kw">To</span> 10)
+<span class="com">' ... mais tarde, precisa de mais espaço:</span>
+ReDim <span class="kw">Preserve</span> vendas(1 <span class="kw">To</span> 20)</pre>
+
+    <div class="callout"><strong>Por que importa:</strong> ler/escrever célula a célula em um loop de 10.000 linhas pode levar minutos. Fazendo a transferência via array, o mesmo processamento leva menos de um segundo.</div>
+  `,
+  exercises:[
+    {q:"Crie uma macro que carregue os valores de A1:A100 em um array, calcule a soma total em VBA (sem usar =SOMA) e mostre o resultado em uma MsgBox.",
+     a:`<span class="kw">Sub</span> SomarComArray()
+    <span class="kw">Dim</span> dados <span class="kw">As</span> Variant, i <span class="kw">As</span> Long, soma <span class="kw">As</span> Double
+    dados = Range(<span class="str">"A1:A100"</span>).Value
+
+    <span class="kw">For</span> i = 1 <span class="kw">To</span> UBound(dados, 1)
+        soma = soma + dados(i, 1)
+    <span class="kw">Next</span> i
+
+    MsgBox <span class="str">"Soma total: "</span> & soma
+<span class="kw">End Sub</span>`},
+    {q:"Declare um array dinâmico de nomes, adicione 3 nomes com ReDim Preserve (um de cada vez) e escreva todos na coluna A.",
+     a:`<span class="kw">Sub</span> ArrayDinamico()
+    <span class="kw">Dim</span> nomes() <span class="kw">As</span> String
+    <span class="kw">Dim</span> i <span class="kw">As</span> Integer
+
+    ReDim nomes(1 <span class="kw">To</span> 1): nomes(1) = <span class="str">"Ana"</span>
+    ReDim <span class="kw">Preserve</span> nomes(1 <span class="kw">To</span> 2): nomes(2) = <span class="str">"Bruno"</span>
+    ReDim <span class="kw">Preserve</span> nomes(1 <span class="kw">To</span> 3): nomes(3) = <span class="str">"Carla"</span>
+
+    <span class="kw">For</span> i = 1 <span class="kw">To</span> UBound(nomes)
+        Cells(i, 1).Value = nomes(i)
+    <span class="kw">Next</span> i
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"consolidacao",
+  title:"Consolidação de Dados",
+  lede:"Consolidar significa reunir dados espalhados em várias planilhas ou pastas de trabalho em um único local — resumido, somado ou simplesmente empilhado.",
+  body:`
+    <h3>Consolidando várias planilhas em uma</h3>
+    <pre><span class="kw">Sub</span> ConsolidarPlanilhas()
+    <span class="kw">Dim</span> ws <span class="kw">As</span> Worksheet
+    <span class="kw">Dim</span> wsDestino <span class="kw">As</span> Worksheet
+    <span class="kw">Dim</span> ultimaLinhaDestino <span class="kw">As</span> Long
+    <span class="kw">Dim</span> ultimaLinhaOrigem <span class="kw">As</span> Long
+
+    <span class="kw">Set</span> wsDestino = Worksheets(<span class="str">"Consolidado"</span>)
+    wsDestino.Cells.Clear
+
+    <span class="kw">For Each</span> ws <span class="kw">In</span> ThisWorkbook.Worksheets
+        <span class="kw">If</span> ws.Name <> <span class="str">"Consolidado"</span> <span class="kw">Then</span>
+            ultimaLinhaOrigem = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+            ultimaLinhaDestino = wsDestino.Cells(wsDestino.Rows.Count, 1).End(xlUp).Row + 1
+
+            ws.Range(<span class="str">"A1:D"</span> & ultimaLinhaOrigem).Copy _
+                wsDestino.Cells(ultimaLinhaDestino, 1)
+        <span class="kw">End If</span>
+    <span class="kw">Next</span> ws
+<span class="kw">End Sub</span></pre>
+
+    <h3>Consolidando de várias pastas de trabalho de uma pasta</h3>
+    <pre><span class="kw">Sub</span> ConsolidarArquivos()
+    <span class="kw">Dim</span> pasta <span class="kw">As</span> String, arquivo <span class="kw">As</span> String
+    <span class="kw">Dim</span> wbOrigem <span class="kw">As</span> Workbook
+    <span class="kw">Dim</span> linhaDestino <span class="kw">As</span> Long
+
+    pasta = <span class="str">"C:\\Relatorios\\"</span>
+    arquivo = Dir(pasta & <span class="str">"*.xlsx"</span>)
+    linhaDestino = 2
+
+    <span class="kw">Do While</span> arquivo <> <span class="str">""</span>
+        <span class="kw">Set</span> wbOrigem = Workbooks.Open(pasta & arquivo)
+        wbOrigem.Worksheets(1).Range(<span class="str">"A2:D100"</span>).Copy _
+            ThisWorkbook.Worksheets(<span class="str">"Consolidado"</span>).Cells(linhaDestino, 1)
+        linhaDestino = ThisWorkbook.Worksheets(<span class="str">"Consolidado"</span>) _
+            .Cells(Rows.Count, 1).End(xlUp).Row + 1
+        wbOrigem.Close <span class="kw">False</span>
+        arquivo = Dir
+    <span class="kw">Loop</span>
+<span class="kw">End Sub</span></pre>
+
+    <h3>Consolidação com soma (Dictionary)</h3>
+    <p>Para somar valores repetidos por categoria (equivalente a uma tabela dinâmica via código), use o objeto <code class="inline">Scripting.Dictionary</code>:</p>
+    <pre><span class="kw">Sub</span> SomarPorCategoria()
+    <span class="kw">Dim</span> dic <span class="kw">As</span> Object
+    <span class="kw">Set</span> dic = CreateObject(<span class="str">"Scripting.Dictionary"</span>)
+    <span class="kw">Dim</span> i <span class="kw">As</span> Long, ultLin <span class="kw">As</span> Long
+    ultLin = Cells(Rows.Count, 1).End(xlUp).Row
+
+    <span class="kw">For</span> i = 2 <span class="kw">To</span> ultLin
+        <span class="kw">Dim</span> chave <span class="kw">As</span> String: chave = Cells(i, 1).Value
+        <span class="kw">If</span> dic.Exists(chave) <span class="kw">Then</span>
+            dic(chave) = dic(chave) + Cells(i, 2).Value
+        <span class="kw">Else</span>
+            dic.Add chave, Cells(i, 2).Value
+        <span class="kw">End If</span>
+    <span class="kw">Next</span> i
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Referência cruzada com o Fab40:</strong> este é o mesmo tipo de lógica usada para consolidar leituras de múltiplas estações (Torno CNC, Centro de Usinagem) em um único log — troque "planilha" por "fonte de dados" e o padrão se mantém.</div>
+  `,
+  exercises:[
+    {q:"Adapte a macro ConsolidarPlanilhas para ignorar planilhas cujo nome comece com 'temp_'.",
+     a:`<span class="kw">Sub</span> ConsolidarIgnorandoTemp()
+    <span class="kw">Dim</span> ws <span class="kw">As</span> Worksheet, wsDestino <span class="kw">As</span> Worksheet
+    <span class="kw">Dim</span> ultOrigem <span class="kw">As</span> Long, ultDestino <span class="kw">As</span> Long
+    <span class="kw">Set</span> wsDestino = Worksheets(<span class="str">"Consolidado"</span>)
+
+    <span class="kw">For Each</span> ws <span class="kw">In</span> ThisWorkbook.Worksheets
+        <span class="kw">If</span> ws.Name <> <span class="str">"Consolidado"</span> <span class="kw">And</span> Left(ws.Name, 5) <> <span class="str">"temp_"</span> <span class="kw">Then</span>
+            ultOrigem = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+            ultDestino = wsDestino.Cells(wsDestino.Rows.Count, 1).End(xlUp).Row + 1
+            ws.Range(<span class="str">"A1:D"</span> & ultOrigem).Copy wsDestino.Cells(ultDestino, 1)
+        <span class="kw">End If</span>
+    <span class="kw">Next</span> ws
+<span class="kw">End Sub</span>`},
+    {q:"Usando Dictionary, conte quantas ocorrências de cada valor existem na coluna A (em vez de somar) e escreva o resultado nas colunas D e E.",
+     a:`<span class="kw">Sub</span> ContarOcorrencias()
+    <span class="kw">Dim</span> dic <span class="kw">As</span> Object, i <span class="kw">As</span> Long, ultLin <span class="kw">As</span> Long
+    <span class="kw">Set</span> dic = CreateObject(<span class="str">"Scripting.Dictionary"</span>)
+    ultLin = Cells(Rows.Count, 1).End(xlUp).Row
+
+    <span class="kw">For</span> i = 1 <span class="kw">To</span> ultLin
+        <span class="kw">Dim</span> chave <span class="kw">As</span> String: chave = Cells(i, 1).Value
+        <span class="kw">If</span> dic.Exists(chave) <span class="kw">Then</span>
+            dic(chave) = dic(chave) + 1
+        <span class="kw">Else</span>
+            dic.Add chave, 1
+        <span class="kw">End If</span>
+    <span class="kw">Next</span> i
+
+    <span class="kw">Dim</span> k <span class="kw">As</span> Variant, linha <span class="kw">As</span> Long: linha = 1
+    <span class="kw">For Each</span> k <span class="kw">In</span> dic.Keys
+        Cells(linha, 4).Value = k
+        Cells(linha, 5).Value = dic(k)
+        linha = linha + 1
+    <span class="kw">Next</span> k
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"controles",
+  title:"Controles de Formulários (UserForm)",
+  lede:"UserForms criam interfaces próprias — caixas de texto, botões, listas — para coletar dados do usuário de forma mais amigável do que digitar direto na planilha.",
+  body:`
+    <h3>Criando um UserForm</h3>
+    <p>No VBE: Inserir → UserForm. Arraste controles da Caixa de Ferramentas: <code class="inline">TextBox</code>, <code class="inline">ComboBox</code>, <code class="inline">CommandButton</code>, <code class="inline">Label</code>, <code class="inline">CheckBox</code>, <code class="inline">OptionButton</code>, <code class="inline">ListBox</code>.</p>
+
+    <h3>Exemplo: cadastro simples</h3>
+    <pre><span class="com">' Código no módulo do UserForm (frmCadastro)</span>
+<span class="kw">Private Sub</span> UserForm_Initialize()
+    cboSetor.List = Array(<span class="str">"Produção"</span>, <span class="str">"Qualidade"</span>, <span class="str">"Manutenção"</span>)
+    cboSetor.ListIndex = 0
+<span class="kw">End Sub</span>
+
+<span class="kw">Private Sub</span> btnSalvar_Click()
+    <span class="kw">Dim</span> ultLin <span class="kw">As</span> Long
+    ultLin = Worksheets(<span class="str">"Cadastro"</span>).Cells(Rows.Count, 1).End(xlUp).Row + 1
+
+    <span class="kw">With</span> Worksheets(<span class="str">"Cadastro"</span>)
+        .Cells(ultLin, 1).Value = txtNome.Value
+        .Cells(ultLin, 2).Value = cboSetor.Value
+        .Cells(ultLin, 3).Value = chkAtivo.Value
+    <span class="kw">End With</span>
+
+    MsgBox <span class="str">"Registro salvo com sucesso!"</span>
+    Unload Me
+<span class="kw">End Sub</span>
+
+<span class="kw">Private Sub</span> btnCancelar_Click()
+    Unload Me
+<span class="kw">End Sub</span></pre>
+
+    <h3>Exibindo o formulário</h3>
+    <pre><span class="kw">Sub</span> AbrirCadastro()
+    frmCadastro.Show
+<span class="kw">End Sub</span></pre>
+
+    <h3>ListBox com múltiplas colunas</h3>
+    <pre><span class="kw">Private Sub</span> UserForm_Initialize()
+    <span class="kw">With</span> lstFuncionarios
+        .ColumnCount = 2
+        .ColumnWidths = <span class="str">"100;60"</span>
+        .AddItem <span class="str">"Ana"</span>
+        .List(0, 1) = <span class="str">"5000"</span>
+    <span class="kw">End With</span>
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Boa prática:</strong> nomeie os controles com prefixo do tipo (<code class="inline">txt</code>, <code class="inline">cbo</code>, <code class="inline">btn</code>, <code class="inline">chk</code>) — facilita muito a leitura do código à medida que o formulário cresce.</div>
+  `,
+  exercises:[
+    {q:"Crie um UserForm com um TextBox (txtValor) e um CommandButton (btnCalcular) que exiba em uma MsgBox o valor com 10% de acréscimo.",
+     a:`<span class="kw">Private Sub</span> btnCalcular_Click()
+    <span class="kw">If Not</span> IsNumeric(txtValor.Value) <span class="kw">Then</span>
+        MsgBox <span class="str">"Digite um número válido."</span>
+        <span class="kw">Exit Sub</span>
+    <span class="kw">End If</span>
+    MsgBox <span class="str">"Valor com acréscimo: "</span> & CDbl(txtValor.Value) * 1.1
+<span class="kw">End Sub</span>`},
+    {q:"Adicione ao formulário de cadastro um CheckBox 'chkAtivo' e grave seu estado (True/False) na coluna C ao clicar em Salvar — mostre o trecho de código relevante.",
+     a:`<span class="com">' Dentro de btnSalvar_Click, junto às outras colunas:</span>
+.Cells(ultLin, 3).Value = <span class="kw">IIf</span>(chkAtivo.Value, <span class="str">"Sim"</span>, <span class="str">"Não"</span>)`}
+  ]
+},
+{
+  id:"graficos",
+  title:"Criação de Gráficos em Formulários",
+  lede:"Além de gráficos na planilha, é possível criar e atualizar gráficos dentro de um UserForm, embutindo dashboards diretamente na interface do usuário.",
+  body:`
+    <h3>Inserindo um controle Gráfico no UserForm</h3>
+    <p>No VBE, ative a Caixa de Ferramentas adicional (clique direito na Caixa de Ferramentas → Ferramentas Adicionais → marque "Microsoft Chart Control" ou use um <code class="inline">Image</code> como substituto exportando o gráfico da planilha.)</p>
+
+    <h3>Abordagem prática: gráfico da planilha exibido no formulário</h3>
+    <p>A técnica mais estável (compatível em qualquer versão do Excel) é gerar o gráfico na planilha, exportá-lo como imagem e carregá-lo em um controle <code class="inline">Image</code> do UserForm:</p>
+    <pre><span class="kw">Private Sub</span> UserForm_Initialize()
+    <span class="kw">Dim</span> cht <span class="kw">As</span> ChartObject
+    <span class="kw">Set</span> cht = Worksheets(<span class="str">"Dashboard"</span>).ChartObjects(<span class="str">"GraficoVendas"</span>)
+
+    cht.Chart.Export Filename:=Environ(<span class="str">"TEMP"</span>) & <span class="str">"\\grafico_temp.gif"</span>, FilterName:=<span class="str">"GIF"</span>
+    imgGrafico.Picture = LoadPicture(Environ(<span class="str">"TEMP"</span>) & <span class="str">"\\grafico_temp.gif"</span>)
+<span class="kw">End Sub</span></pre>
+
+    <h3>Criando o gráfico dinamicamente via VBA</h3>
+    <pre><span class="kw">Sub</span> CriarGraficoVendas()
+    <span class="kw">Dim</span> cht <span class="kw">As</span> ChartObject
+    <span class="kw">Set</span> cht = Worksheets(<span class="str">"Dashboard"</span>).ChartObjects.Add(Left:=300, Top:=20, Width:=400, Height:=250)
+
+    <span class="kw">With</span> cht.Chart
+        .SetSourceData Source:=Worksheets(<span class="str">"Dados"</span>).Range(<span class="str">"A1:B13"</span>)
+        .ChartType = xlColumnClustered
+        .HasTitle = <span class="kw">True</span>
+        .ChartTitle.Text = <span class="str">"Vendas Mensais"</span>
+    <span class="kw">End With</span>
+    cht.Name = <span class="str">"GraficoVendas"</span>
+<span class="kw">End Sub</span></pre>
+
+    <h3>Atualizando o gráfico ao trocar o filtro no formulário</h3>
+    <pre><span class="kw">Private Sub</span> cboAno_Change()
+    <span class="kw">Dim</span> intervalo <span class="kw">As</span> Range
+    <span class="kw">Set</span> intervalo = ObterIntervaloPorAno(cboAno.Value)
+    Worksheets(<span class="str">"Dashboard"</span>).ChartObjects(<span class="str">"GraficoVendas"</span>).Chart.SetSourceData intervalo
+    UserForm_Initialize <span class="com">' reexporta e recarrega a imagem</span>
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Alternativa moderna:</strong> em vez de embutir gráfico no formulário, muitos desenvolvedores optam por manter o dashboard direto na planilha (módulo 15) e usar o UserForm só para filtros/entrada de dados — mais leve e fácil de manter.</div>
+  `,
+  exercises:[
+    {q:"Escreva a macro que cria um gráfico de pizza a partir do intervalo A1:B6 da planilha 'Resumo', posicionado a partir da célula D2.",
+     a:`<span class="kw">Sub</span> CriarGraficoPizza()
+    <span class="kw">Dim</span> cht <span class="kw">As</span> ChartObject
+    <span class="kw">Set</span> cht = Worksheets(<span class="str">"Resumo"</span>).ChartObjects.Add( _
+        Left:=Range(<span class="str">"D2"</span>).Left, Top:=Range(<span class="str">"D2"</span>).Top, Width:=300, Height:=200)
+
+    <span class="kw">With</span> cht.Chart
+        .SetSourceData Source:=Worksheets(<span class="str">"Resumo"</span>).Range(<span class="str">"A1:B6"</span>)
+        .ChartType = xlPie
+        .HasTitle = <span class="kw">True</span>
+        .ChartTitle.Text = <span class="str">"Distribuição"</span>
+    <span class="kw">End With</span>
+<span class="kw">End Sub</span>`},
+    {q:"Explique, em código comentado, o fluxo necessário para exibir esse gráfico dentro de um UserForm usando um controle Image.",
+     a:`<span class="com">' 1) O gráfico já existe na planilha como ChartObject
+' 2) No evento UserForm_Initialize, exportamos o gráfico como imagem temporária
+' 3) Carregamos essa imagem no controle Image do formulário com LoadPicture</span>
+<span class="kw">Private Sub</span> UserForm_Initialize()
+    Worksheets(<span class="str">"Resumo"</span>).ChartObjects(1).Chart.Export _
+        Environ(<span class="str">"TEMP"</span>) & <span class="str">"\\pizza.gif"</span>, <span class="str">"GIF"</span>
+    imgGrafico.Picture = LoadPicture(Environ(<span class="str">"TEMP"</span>) & <span class="str">"\\pizza.gif"</span>)
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"validacao",
+  title:"Tratamento de Erros e Validação de Campos",
+  lede:"Um formulário bem construído nunca confia cegamente no que o usuário digitou — valida cada campo antes de gravar, e falha de forma clara quando algo está errado.",
+  body:`
+    <h3>Validação básica de campos obrigatórios</h3>
+    <pre><span class="kw">Private Function</span> FormularioValido() <span class="kw">As</span> Boolean
+    FormularioValido = <span class="kw">True</span>
+
+    <span class="kw">If</span> Trim(txtNome.Value) = <span class="str">""</span> <span class="kw">Then</span>
+        MsgBox <span class="str">"Informe o nome."</span>, vbExclamation
+        txtNome.SetFocus
+        FormularioValido = <span class="kw">False</span>
+        <span class="kw">Exit Function</span>
+    <span class="kw">End If</span>
+
+    <span class="kw">If Not</span> IsNumeric(txtIdade.Value) <span class="kw">Then</span>
+        MsgBox <span class="str">"Idade deve ser um número."</span>, vbExclamation
+        txtIdade.SetFocus
+        FormularioValido = <span class="kw">False</span>
+        <span class="kw">Exit Function</span>
+    <span class="kw">End If</span>
+
+    <span class="kw">If</span> CInt(txtIdade.Value) < 18 <span class="kw">Then</span>
+        MsgBox <span class="str">"Idade mínima: 18 anos."</span>, vbExclamation
+        FormularioValido = <span class="kw">False</span>
+    <span class="kw">End If</span>
+<span class="kw">End Function</span></pre>
+
+    <h3>Usando a validação antes de salvar</h3>
+    <pre><span class="kw">Private Sub</span> btnSalvar_Click()
+    <span class="kw">If Not</span> FormularioValido() <span class="kw">Then</span> <span class="kw">Exit Sub</span>
+
+    <span class="kw">On Error GoTo</span> TratarErro
+    <span class="com">' ... grava os dados ...</span>
+    MsgBox <span class="str">"Salvo com sucesso."</span>
+    <span class="kw">Exit Sub</span>
+
+TratarErro:
+    MsgBox <span class="str">"Erro ao salvar: "</span> & Err.Description, vbCritical
+<span class="kw">End Sub</span></pre>
+
+    <h3>Validação em tempo real (evento KeyPress)</h3>
+    <p>Bloqueia caracteres inválidos enquanto o usuário digita — útil em campos numéricos:</p>
+    <pre><span class="kw">Private Sub</span> txtIdade_KeyPress(<span class="kw">ByVal</span> KeyAscii <span class="kw">As</span> MSForms.ReturnInteger)
+    <span class="kw">If Not</span> (KeyAscii >= 48 <span class="kw">And</span> KeyAscii <= 57) <span class="kw">Then</span>
+        KeyAscii = 0 <span class="com">' cancela o caractere digitado se não for número</span>
+    <span class="kw">End If</span>
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Regra de ouro:</strong> valide sempre no momento de salvar (não confie só na validação em tempo real) — o usuário pode colar texto no campo, ignorando o KeyPress.</div>
+  `,
+  exercises:[
+    {q:"Adicione à função FormularioValido uma checagem de e-mail: o campo txtEmail deve conter obrigatoriamente o caractere '@'.",
+     a:`<span class="kw">If</span> InStr(txtEmail.Value, <span class="str">"@"</span>) = 0 <span class="kw">Then</span>
+    MsgBox <span class="str">"Informe um e-mail válido."</span>, vbExclamation
+    txtEmail.SetFocus
+    FormularioValido = <span class="kw">False</span>
+    <span class="kw">Exit Function</span>
+<span class="kw">End If</span>`},
+    {q:"Escreva um evento KeyPress para um campo txtCEP que aceite apenas números e o caractere hífen (-).",
+     a:`<span class="kw">Private Sub</span> txtCEP_KeyPress(<span class="kw">ByVal</span> KeyAscii <span class="kw">As</span> MSForms.ReturnInteger)
+    <span class="kw">Dim</span> permitido <span class="kw">As</span> Boolean
+    permitido = (KeyAscii >= 48 <span class="kw">And</span> KeyAscii <= 57) <span class="kw">Or</span> KeyAscii = Asc(<span class="str">"-"</span>)
+    <span class="kw">If Not</span> permitido <span class="kw">Then</span> KeyAscii = 0
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"ribbon",
+  title:"Desenvolvimento de Ribbons",
+  lede:"Uma guia (ribbon) personalizada dá à sua aplicação VBA a aparência de um suplemento profissional — botões próprios, ícones e organização visual, em vez de depender só de atalhos e da guia Desenvolvedor.",
+  body:`
+    <h3>Como funciona</h3>
+    <p>Ribbons não são criadas em VBA puro — são definidas em XML (Custom UI) embutido no arquivo <code class="inline">.xlsm</code>, e o VBA responde aos cliques através de callbacks. É necessário o editor "Custom UI Editor for Microsoft Office" (ferramenta gratuita) para inserir o XML no arquivo.</p>
+
+    <h3>Estrutura básica do XML</h3>
+    <pre>&lt;customUI xmlns=<span class="str">"http://schemas.microsoft.com/office/2009/07/customui"</span> onLoad=<span class="str">"RibbonCarregada"</span>&gt;
+  &lt;ribbon&gt;
+    &lt;tabs&gt;
+      &lt;tab id=<span class="str">"tabFab40"</span> label=<span class="str">"Fab40"</span>&gt;
+        &lt;group id=<span class="str">"grpOperacoes"</span> label=<span class="str">"Operações"</span>&gt;
+          &lt;button id=<span class="str">"btnConsolidar"</span> label=<span class="str">"Consolidar"</span>
+                  imageMso=<span class="str">"TableInsert"</span>
+                  size=<span class="str">"large"</span>
+                  onAction=<span class="str">"AoClicarConsolidar"</span> /&gt;
+          &lt;button id=<span class="str">"btnDashboard"</span> label=<span class="str">"Dashboard"</span>
+                  imageMso=<span class="str">"ChartInsert"</span>
+                  size=<span class="str">"large"</span>
+                  onAction=<span class="str">"AoClicarDashboard"</span> /&gt;
+        &lt;/group&gt;
+      &lt;/tab&gt;
+    &lt;/tabs&gt;
+  &lt;/ribbon&gt;
+&lt;/customUI&gt;</pre>
+
+    <h3>Callbacks no VBA (módulo padrão)</h3>
+    <pre><span class="kw">Dim</span> RibbonAtual <span class="kw">As</span> IRibbonUI
+
+<span class="kw">Sub</span> RibbonCarregada(ribbon <span class="kw">As</span> IRibbonUI)
+    <span class="kw">Set</span> RibbonAtual = ribbon
+<span class="kw">End Sub</span>
+
+<span class="kw">Sub</span> AoClicarConsolidar(control <span class="kw">As</span> IRibbonControl)
+    Call ConsolidarPlanilhas <span class="com">' reaproveita a Sub do módulo 9</span>
+<span class="kw">End Sub</span>
+
+<span class="kw">Sub</span> AoClicarDashboard(control <span class="kw">As</span> IRibbonControl)
+    Worksheets(<span class="str">"Dashboard"</span>).Activate
+<span class="kw">End Sub</span></pre>
+
+    <h3>Atualizando o estado de um botão dinamicamente</h3>
+    <pre><span class="kw">Sub</span> AtualizarRibbon()
+    <span class="kw">If Not</span> RibbonAtual <span class="kw">Is Nothing Then</span> RibbonAtual.Invalidate
+<span class="kw">End Sub</span></pre>
+
+    <div class="callout"><strong>Fluxo de trabalho:</strong> 1) feche o Excel → 2) abra o arquivo no Custom UI Editor → 3) cole o XML → 4) salve → 5) reabra no Excel e implemente os callbacks correspondentes no VBE.</div>
+  `,
+  exercises:[
+    {q:"Escreva o XML de um grupo de ribbon com dois botões: 'Importar Dados' e 'Exportar Relatório', cada um com seu callback.",
+     a:`&lt;group id=<span class="str">"grpDados"</span> label=<span class="str">"Dados"</span>&gt;
+  &lt;button id=<span class="str">"btnImportar"</span> label=<span class="str">"Importar Dados"</span>
+          imageMso=<span class="str">"Import"</span> size=<span class="str">"large"</span>
+          onAction=<span class="str">"AoClicarImportar"</span> /&gt;
+  &lt;button id=<span class="str">"btnExportar"</span> label=<span class="str">"Exportar Relatório"</span>
+          imageMso=<span class="str">"Export"</span> size=<span class="str">"large"</span>
+          onAction=<span class="str">"AoClicarExportar"</span> /&gt;
+&lt;/group&gt;`},
+    {q:"Escreva os dois Subs de callback correspondentes no VBA, que apenas exibem uma MsgBox indicando qual botão foi clicado.",
+     a:`<span class="kw">Sub</span> AoClicarImportar(control <span class="kw">As</span> IRibbonControl)
+    MsgBox <span class="str">"Importar Dados clicado"</span>
+<span class="kw">End Sub</span>
+
+<span class="kw">Sub</span> AoClicarExportar(control <span class="kw">As</span> IRibbonControl)
+    MsgBox <span class="str">"Exportar Relatório clicado"</span>
+<span class="kw">End Sub</span>`}
+  ]
+},
+{
+  id:"solver",
+  title:"Solver",
+  lede:"O Solver resolve problemas de otimização — encontrar o melhor valor para uma célula (máximo, mínimo ou específico) ajustando outras células, respeitando restrições.",
+  body:`
+    <h3>Habilitando o Solver via VBA</h3>
+    <p>Antes de usar em código, ative a referência: VBE → Ferramentas → Referências → marque <code class="inline">SOLVER</code> (requer o suplemento Solver ativado em Arquivo → Opções → Suplementos).</p>
+
+    <h3>Estrutura de um problema de Solver</h3>
+    <ul>
+      <li><strong>Célula de destino (objetivo)</strong> — a célula que você quer maximizar, minimizar ou igualar a um valor.</li>
+      <li><strong>Células variáveis</strong> — as células que o Solver pode alterar.</li>
+      <li><strong>Restrições</strong> — limites que a solução deve respeitar (ex.: orçamento ≤ 10000).</li>
+    </ul>
+
+    <h3>Configurando e rodando via código</h3>
+    <pre><span class="kw">Sub</span> OtimizarProducao()
+    SolverReset
+
+    SolverOk SetCell:=<span class="str">"$D$1"</span>, MaxMinVal:=1, ValueOf:=0, _
+             ByChange:=<span class="str">"$B$2:$B$5"</span>, Engine:=1, EngineDesc:=<span class="str">"Simplex LP"</span>
+
+    <span class="com">' Restrição: soma das horas usadas <= horas disponíveis</span>
+    SolverAdd CellRef:=<span class="str">"$C$6"</span>, Relation:=1, FormulaText:=<span class="str">"$C$7"</span>
+
+    <span class="com">' Restrição: quantidades produzidas >= 0</span>
+    SolverAdd CellRef:=<span class="str">"$B$2:$B$5"</span>, Relation:=3, FormulaText:=<span class="str">"0"</span>
+
+    SolverSolve UserFinish:=<span class="kw">True</span>
+    MsgBox <span class="str">"Solução ótima encontrada! Lucro máximo: "</span> & Range(<span class="str">"D1"</span>).Value
+<span class="kw">End Sub</span></pre>
+
+    <p><code class="inline">MaxMinVal</code>: <code class="inline">1</code> = maximizar, <code class="inline">2</code> = minimizar, <code class="inline">3</code> = igualar a um valor. <code class="inline">Relation</code>: <code class="inline">1</code> = ≤, <code class="inline">2</code> = =, <code class="inline">3</code> = ≥.</p>
+
+    <h3>Exemplo de cenário: mix de produção</h3>
+    <p>Uma célula de destino calcula o lucro total (=SOMARPRODUTO das quantidades pelos lucros unitários); as células variáveis são as quantidades de cada produto; as restrições limitam horas de máquina e estoque de matéria-prima disponíveis — um paralelo direto com o balanceamento de capacidade de estações no Fab40.</p>
+
+    <div class="callout"><strong>Cuidado:</strong> o Solver do Excel, mesmo via VBA, é interativo por padrão — para rodar totalmente em segundo plano é preciso <code class="inline">SolverSolve UserFinish:=True</code>, que evita a caixa de diálogo de confirmação final.</div>
+  `,
+  exercises:[
+    {q:"Escreva a chamada SolverOk para minimizar a célula E1, alterando as células B2:B4, mantendo tudo o mais igual ao exemplo.",
+     a:`SolverReset
+SolverOk SetCell:=<span class="str">"$E$1"</span>, MaxMinVal:=2, ValueOf:=0, _
+         ByChange:=<span class="str">"$B$2:$B$4"</span>, Engine:=1, EngineDesc:=<span class="str">"Simplex LP"</span>
+SolverSolve UserFinish:=<span class="kw">True</span>`},
+    {q:"Adicione uma restrição que obrigue a célula F1 (custo total) a ser menor ou igual a 5000.",
+     a:`SolverAdd CellRef:=<span class="str">"$F$1"</span>, Relation:=1, FormulaText:=<span class="str">"5000"</span>`}
+  ]
+},
+{
+  id:"dashboard",
+  title:"Dashboard",
+  lede:"O módulo final reúne tudo: um painel visual, atualizado automaticamente via VBA, que resume os dados-chave da pasta de trabalho em um único lugar.",
+  body:`
+    <h3>Estrutura de um dashboard controlado por VBA</h3>
+    <ul>
+      <li><strong>Planilha de dados brutos</strong> — fonte, geralmente oculta do usuário final.</li>
+      <li><strong>Planilha de cálculo</strong> — fórmulas/tabelas dinâmicas que resumem os dados.</li>
+      <li><strong>Planilha "Dashboard"</strong> — só gráficos, indicadores e controles de filtro; sem fórmulas visíveis.</li>
+    </ul>
+
+    <h3>Atualizando o dashboard com um clique</h3>
+    <pre><span class="kw">Sub</span> AtualizarDashboard()
+    Application.ScreenUpdating = <span class="kw">False</span>
+    <span class="kw">On Error GoTo</span> TratarErro
+
+    ThisWorkbook.RefreshAll <span class="com">' atualiza tabelas dinâmicas e conexões</span>
+
+    <span class="kw">Dim</span> pvt <span class="kw">As</span> PivotTable
+    <span class="kw">For Each</span> pvt <span class="kw">In</span> Worksheets(<span class="str">"Calculo"</span>).PivotTables
+        pvt.RefreshTable
+    <span class="kw">Next</span> pvt
+
+    Range(<span class="str">"IndicadorFaturamento"</span>).Value = _
+        Application.WorksheetFunction.Sum(Worksheets(<span class="str">"Dados"</span>).Range(<span class="str">"D:D"</span>))
+
+    Worksheets(<span class="str">"Dashboard"</span>).ChartObjects(<span class="str">"GraficoVendas"</span>).Chart.Refresh
+
+Saida:
+    Application.ScreenUpdating = <span class="kw">True</span>
+    <span class="kw">Exit Sub</span>
+TratarErro:
+    MsgBox <span class="str">"Erro ao atualizar dashboard: "</span> & Err.Description
+    <span class="kw">Resume</span> Saida
+<span class="kw">End Sub</span></pre>
+
+    <h3>Indicadores tipo "cartão" (KPI) com formatação condicional via código</h3>
+    <pre><span class="kw">Sub</span> AtualizarKPI()
+    <span class="kw">Dim</span> meta <span class="kw">As</span> Double, realizado <span class="kw">As</span> Double
+    meta = Range(<span class="str">"MetaMensal"</span>).Value
+    realizado = Range(<span class="str">"RealizadoMensal"</span>).Value
+
+    <span class="kw">With</span> Range(<span class="str">"CartaoKPI"</span>)
+        .Value = Format(realizado / meta, <span class="str">"0%"</span>)
+        <span class="kw">If</span> realizado >= meta <span class="kw">Then</span>
+            .Interior.Color = RGB(198, 239, 206) <span class="com">' verde claro</span>
+        <span class="kw">Else</span>
+            .Interior.Color = RGB(255, 199, 206) <span class="com">' vermelho claro</span>
+        <span class="kw">End If</span>
+    <span class="kw">End With</span>
+<span class="kw">End Sub</span></pre>
+
+    <h3>Conectando ao botão da ribbon</h3>
+    <p>O dashboard costuma ser o destino final do botão de ribbon criado no módulo 13 — um clique dispara <code class="inline">AtualizarDashboard</code> e leva o usuário direto para a aba visual, fechando o ciclo do curso: ambiente → lógica → dados → interface.</p>
+
+    <div class="callout"><strong>Projeto final sugerido:</strong> combine os módulos 9 (consolidação), 11 (gráficos), 12 (validação de formulário de entrada) e este, para montar um dashboard completo alimentado por um UserForm de cadastro.</div>
+  `,
+  exercises:[
+    {q:"Escreva uma macro AtualizarKPIProdutividade que compare Cells('Produzido') com Cells('Capacidade') e pinte de verde se >= 90%, amarelo se entre 70% e 90%, e vermelho abaixo disso.",
+     a:`<span class="kw">Sub</span> AtualizarKPIProdutividade()
+    <span class="kw">Dim</span> pct <span class="kw">As</span> Double
+    pct = Range(<span class="str">"Produzido"</span>).Value / Range(<span class="str">"Capacidade"</span>).Value
+
+    <span class="kw">With</span> Range(<span class="str">"CartaoProdutividade"</span>)
+        .Value = Format(pct, <span class="str">"0%"</span>)
+        <span class="kw">Select Case</span> pct
+            <span class="kw">Case Is</span> >= 0.9: .Interior.Color = RGB(198,239,206)
+            <span class="kw">Case</span> 0.7 <span class="kw">To</span> 0.9: .Interior.Color = RGB(255,235,156)
+            <span class="kw">Case Else</span>: .Interior.Color = RGB(255,199,206)
+        <span class="kw">End Select</span>
+    <span class="kw">End With</span>
+<span class="kw">End Sub</span>`},
+    {q:"Monte o esqueleto de uma macro que rode ao abrir a pasta de trabalho (Workbook_Open) e já deixe o dashboard atualizado e a aba correta ativa.",
+     a:`<span class="com">' No módulo ThisWorkbook</span>
+<span class="kw">Private Sub</span> Workbook_Open()
+    Call AtualizarDashboard
+    Worksheets(<span class="str">"Dashboard"</span>).Activate
+<span class="kw">End Sub</span>`}
+  ]
+}
+];
+
+let currentIndex = 0;
+
+function renderNav(){
+  const nav = document.getElementById('navlist');
+  nav.innerHTML = modules.map((m,i)=>`
+    <li><button data-idx="${i}" class="${i===currentIndex?'active':''}">
+      <span class="num">${String(i+1).padStart(2,'0')}</span><span>${m.title}</span>
+    </button></li>
+  `).join('');
+  nav.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=> goTo(parseInt(btn.dataset.idx)));
+  });
+}
+
+function renderMain(){
+  const main = document.getElementById('main');
+  main.innerHTML = modules.map((m,i)=>`
+    <section class="module ${i===currentIndex?'active':''}" id="mod-${m.id}">
+      <div class="kicker">Módulo ${String(i+1).padStart(2,'0')} de ${modules.length}</div>
+      <h2 class="mtitle">${m.title}</h2>
+      <p class="lede">${m.lede}</p>
+      ${m.body}
+      <div class="exercises">
+        <h3>Exercícios</h3>
+        ${m.exercises.map((ex,j)=>`
+          <div class="ex">
+            <div class="exq">${j+1}. ${ex.q}</div>
+            <details><summary>Ver solução</summary><pre>${ex.a}</pre></details>
+          </div>
+        `).join('')}
+      </div>
+      <div class="modnav">
+        <button data-nav="prev" ${i===0?'disabled':''}>&larr; Módulo anterior</button>
+        <button data-nav="next" ${i===modules.length-1?'disabled':''}>Próximo módulo &rarr;</button>
+      </div>
+    </section>
+  `).join('');
+
+  main.querySelectorAll('[data-nav]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.dataset.nav==='prev') goTo(currentIndex-1);
+      else goTo(currentIndex+1);
+    });
+  });
+}
+
+function goTo(idx){
+  if(idx<0 || idx>=modules.length) return;
+  currentIndex = idx;
+  renderNav();
+  document.querySelectorAll('.module').forEach((el,i)=>{
+    el.classList.toggle('active', i===currentIndex);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+renderNav();
+renderMain();
+</script>
+</body>
+</html>
